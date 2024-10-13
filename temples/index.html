@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/style.css">
+    <title>Simulación Financiera</title>
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <script>
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart(data) {
+            const chartData = google.visualization.arrayToDataTable(data);
+            const options = {
+                title: 'Impacto Financiero',
+                hAxis: { title: 'Año' },
+                vAxis: { title: 'Monto' },
+                curveType: 'function',
+                legend: { position: 'bottom' }
+            };
+
+            const chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+            chart.draw(chartData, options);
+        }
+    </script>
+</head>
+<body>
+    <h1>Simulación Financiera</h1>
+    <form action="/simulate/" method="post">
+        <label for="scenario">Selecciona un escenario:</label>
+        <select name="scenario" id="scenario">
+            <option value="casa">Compra de Casa</option>
+            <option value="negocio">Iniciar un Negocio</option>
+            <option value="inversión">Inversión</option>
+        </select>
+        <br>
+        <label for="income">Ingresos:</label>
+        <input type="number" name="income" id="income" required>
+        <br>
+        <label for="debts">Deudas:</label>
+        <input type="number" name="debts" id="debts" required>
+        <br>
+        <label for="savings">Ahorros:</label>
+        <input type="number" name="savings" id="savings" required>
+        <br>
+        <button type="submit">Simular</button>
+    </form>
+
+    <div id="curve_chart" style="width: 900px; height: 500px"></div>
+
+    <script>
+        const impactData = {{ impact_data|tojson }};
+        drawChart([['Año', 'Monto'], ...impactData]);
+    </script>
+</body>
+</html>
